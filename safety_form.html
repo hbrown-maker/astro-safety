@@ -339,7 +339,16 @@
     document.getElementById('r-group').textContent    = group;
     document.getElementById('r-datetime').textContent = formatted;
     document.getElementById('r-leader').textContent   = leader;
-    document.getElementById('sigPreview').src         = canvas.toDataURL('image/png');
+
+    // Flatten signature onto white background so it shows in PDF/print
+    const flatCanvas = document.createElement('canvas');
+    flatCanvas.width  = canvas.width;
+    flatCanvas.height = canvas.height;
+    const flatCtx = flatCanvas.getContext('2d');
+    flatCtx.fillStyle = '#ffffff';
+    flatCtx.fillRect(0, 0, flatCanvas.width, flatCanvas.height);
+    flatCtx.drawImage(canvas, 0, 0);
+    document.getElementById('sigPreview').src = flatCanvas.toDataURL('image/png');
     window._formData = { group, formatted, leader };
 
     document.getElementById('formScreen').style.display = 'none';
