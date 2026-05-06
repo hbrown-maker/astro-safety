@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Astro Travel — Safety Sign-Off</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
   :root {
     --green-dark:  #081a0e;
@@ -19,47 +20,20 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body { font-family: 'DM Sans', sans-serif; background: var(--green-dark); color: var(--white); min-height: 100vh; }
 
-  /* HEADER */
-  .header {
-    background: linear-gradient(150deg, var(--green-light) 0%, var(--green-dark) 100%);
-    border-bottom: 3px solid var(--gold);
-    padding: 28px 20px 22px;
-    position: relative; overflow: hidden;
-  }
-  .header::before {
-    content: ''; position: absolute; top: -40px; right: -40px;
-    width: 140px; height: 140px;
-    border: 2px solid rgba(201,162,39,0.1); border-radius: 50%;
-  }
+  .header { background: linear-gradient(150deg, var(--green-light) 0%, var(--green-dark) 100%); border-bottom: 3px solid var(--gold); padding: 28px 20px 22px; position: relative; overflow: hidden; }
+  .header::before { content: ''; position: absolute; top: -40px; right: -40px; width: 140px; height: 140px; border: 2px solid rgba(201,162,39,0.1); border-radius: 50%; }
   .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
   .brand-star { font-size: 20px; }
   .brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 3px; color: var(--gold); }
-  .header-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.35);
-    border-radius: 20px; padding: 4px 12px;
-    font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
-    color: var(--gold-light); margin-bottom: 10px;
-  }
+  .header-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.35); border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-light); margin-bottom: 10px; }
   h1 { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; line-height: 1.05; }
   h1 span { color: var(--gold); }
   .header-sub { font-size: 13px; color: var(--grey); margin-top: 8px; line-height: 1.55; }
-
-  /* FORM */
   .form-body { padding: 22px 20px; }
 
-  .confirm-box {
-    background: rgba(201,162,39,0.07); border: 1.5px solid rgba(201,162,39,0.3);
-    border-radius: 12px; padding: 16px; margin-bottom: 26px;
-    display: flex; align-items: flex-start; gap: 12px; cursor: pointer;
-  }
+  .confirm-box { background: rgba(201,162,39,0.07); border: 1.5px solid rgba(201,162,39,0.3); border-radius: 12px; padding: 16px; margin-bottom: 26px; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .confirm-box input[type="checkbox"] { display: none; }
-  .check-circle {
-    width: 28px; height: 28px; min-width: 28px;
-    border: 2px solid var(--gold); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 14px; color: transparent; transition: all 0.2s;
-  }
+  .check-circle { width: 28px; height: 28px; min-width: 28px; border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; color: transparent; transition: all 0.2s; }
   .confirm-box.checked .check-circle { background: var(--gold); color: var(--green-dark); }
   .confirm-text { font-size: 14px; font-weight: 500; line-height: 1.5; padding-top: 2px; }
   .confirm-text strong { color: var(--gold-light); display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 4px; }
@@ -67,13 +41,7 @@
   .field { margin-bottom: 22px; }
   label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin-bottom: 8px; }
   label span { color: var(--gold); margin-left: 2px; }
-
-  input[type="text"], input[type="datetime-local"] {
-    width: 100%; background: var(--green-mid); border: 1.5px solid var(--border);
-    border-radius: 10px; color: var(--white); font-family: 'DM Sans', sans-serif;
-    font-size: 16px; padding: 14px 16px; outline: none; transition: border-color 0.2s, background 0.2s;
-    -webkit-appearance: none; appearance: none;
-  }
+  input[type="text"], input[type="datetime-local"] { width: 100%; background: var(--green-mid); border: 1.5px solid var(--border); border-radius: 10px; color: var(--white); font-family: 'DM Sans', sans-serif; font-size: 16px; padding: 14px 16px; outline: none; transition: border-color 0.2s, background 0.2s; -webkit-appearance: none; appearance: none; }
   input:focus { border-color: var(--gold); background: var(--green-light); }
   input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(1) saturate(2) hue-rotate(10deg); cursor: pointer; }
 
@@ -87,13 +55,7 @@
   .btn-clear { background: none; border: 1px solid var(--border); color: var(--grey); font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
   .btn-clear:hover { border-color: var(--gold); color: var(--gold-light); }
 
-  .submit-btn {
-    width: 100%; background: var(--gold); color: var(--green-dark);
-    font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px;
-    border: none; border-radius: 14px; padding: 18px; cursor: pointer;
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    transition: opacity 0.2s; margin-top: 8px; position: relative; overflow: hidden;
-  }
+  .submit-btn { width: 100%; background: var(--gold); color: var(--green-dark); font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; border: none; border-radius: 14px; padding: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: opacity 0.2s; margin-top: 8px; position: relative; overflow: hidden; }
   .submit-btn::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); opacity: 0; transition: opacity 0.2s; }
   .submit-btn:active::before { opacity: 1; }
 
@@ -104,17 +66,8 @@
   #confirmScreen { display: none; min-height: 100vh; flex-direction: column; }
   #confirmScreen.visible { display: flex; }
 
-  .confirm-header {
-    background: linear-gradient(135deg, var(--green-light), var(--green-dark));
-    border-bottom: 3px solid var(--gold);
-    padding: 40px 24px 28px; text-align: center;
-  }
-  .check-anim {
-    width: 72px; height: 72px; background: rgba(201,162,39,0.15);
-    border: 2px solid var(--gold); border-radius: 50%;
-    display: flex; align-items: center; justify-content: center; font-size: 30px;
-    margin: 0 auto 16px; animation: pop 0.4s cubic-bezier(.17,.67,.35,1.5);
-  }
+  .confirm-header { background: linear-gradient(135deg, var(--green-light), var(--green-dark)); border-bottom: 3px solid var(--gold); padding: 40px 24px 28px; text-align: center; }
+  .check-anim { width: 72px; height: 72px; background: rgba(201,162,39,0.15); border: 2px solid var(--gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; margin: 0 auto 16px; animation: pop 0.4s cubic-bezier(.17,.67,.35,1.5); }
   @keyframes pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
   .confirm-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 2px; color: var(--gold-light); }
   .confirm-header p { color: var(--grey); font-size: 13px; margin-top: 6px; }
@@ -123,8 +76,7 @@
 
   .receipt-card { background: var(--green-mid); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
   .receipt-title { background: rgba(201,162,39,0.12); border-bottom: 1px solid var(--border); padding: 12px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-light); }
-  .receipt-row { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid var(--border); }
-  .receipt-row:last-of-type { border-bottom: none; }
+  .receipt-row { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid rgba(201,162,39,0.18); }
   .receipt-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin-bottom: 4px; }
   .receipt-val { font-size: 15px; font-weight: 500; color: var(--white); }
   .sig-preview-wrap { padding: 14px 16px; border-top: 1px solid var(--border); }
@@ -132,9 +84,14 @@
   #sigPreview { width: 100%; border-radius: 8px; background: #fff; display: block; }
 
   .action-btns { display: flex; flex-direction: column; gap: 12px; }
-  .btn-email { width: 100%; background: var(--gold); color: var(--green-dark); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; border: none; border-radius: 12px; padding: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+
+  .btn-share { width: 100%; background: var(--gold); color: var(--green-dark); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; border: none; border-radius: 12px; padding: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: opacity 0.2s; }
+  .btn-share:disabled { opacity: 0.6; }
   .btn-print { width: 100%; background: var(--green-light); border: 1.5px solid var(--border); color: var(--white); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; border-radius: 12px; padding: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn-new { width: 100%; background: none; border: none; color: var(--grey); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px; cursor: pointer; text-decoration: underline; }
+
+  .tip-box { background: rgba(201,162,39,0.08); border: 1px solid rgba(201,162,39,0.25); border-radius: 10px; padding: 14px 16px; font-size: 13px; color: var(--grey); line-height: 1.65; }
+  .tip-box strong { color: var(--gold-light); }
 
   @media print {
     body { background: #fff !important; color: #000 !important; }
@@ -145,6 +102,7 @@
     #formScreen { display: none !important; }
     #confirmScreen { display: flex !important; }
     .action-btns { display: none !important; }
+    .tip-box { display: none !important; }
     .confirm-header { background: #0f2d18 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .confirm-header h2 { color: #e8c040 !important; }
     .receipt-card { border: 1px solid #ccc !important; background: #fff !important; }
@@ -159,15 +117,11 @@
 <!-- FORM SCREEN -->
 <div id="formScreen">
   <div class="header">
-    <div class="brand">
-      <span class="brand-star">✦</span>
-      <span class="brand-name">Astro Travel</span>
-    </div>
+    <div class="brand"><span class="brand-star">✦</span><span class="brand-name">Astro Travel</span></div>
     <div class="header-badge">⚠ Official Record</div>
     <h1>Safety <span>Sign-Off</span></h1>
     <p class="header-sub">Complete all fields and sign below to confirm the safety announcement was delivered to your group.</p>
   </div>
-
   <div class="form-body">
     <div class="confirm-box" id="confirmBox" onclick="toggleConfirm()">
       <input type="checkbox" id="announcementCheck">
@@ -221,35 +175,30 @@
   <div class="confirm-header">
     <div class="check-anim">✦</div>
     <h2>Sign-Off Complete</h2>
-    <p>Tap below to send your confirmation to Astro Travel.</p>
+    <p>Tap the button below to send this record to Astro Travel.</p>
   </div>
   <div class="confirm-body">
-    <div class="receipt-card">
+    <div class="receipt-card" id="receiptCard">
       <div class="receipt-title">✦ Astro Travel — Safety Sign-Off Record</div>
-      <div class="receipt-row">
-        <div class="receipt-label">Safety Announcement</div>
-        <div class="receipt-val">✅ Confirmed — Announcement Made</div>
-      </div>
-      <div class="receipt-row">
-        <div class="receipt-label">Group Name</div>
-        <div class="receipt-val" id="r-group"></div>
-      </div>
-      <div class="receipt-row">
-        <div class="receipt-label">Date &amp; Time</div>
-        <div class="receipt-val" id="r-datetime"></div>
-      </div>
-      <div class="receipt-row">
-        <div class="receipt-label">Group Leader</div>
-        <div class="receipt-val" id="r-leader"></div>
-      </div>
+      <div class="receipt-row"><div class="receipt-label">Safety Announcement</div><div class="receipt-val">✅ Confirmed — Announcement Made</div></div>
+      <div class="receipt-row"><div class="receipt-label">Group Name</div><div class="receipt-val" id="r-group"></div></div>
+      <div class="receipt-row"><div class="receipt-label">Date &amp; Time</div><div class="receipt-val" id="r-datetime"></div></div>
+      <div class="receipt-row"><div class="receipt-label">Group Leader</div><div class="receipt-val" id="r-leader"></div></div>
       <div class="sig-preview-wrap">
         <div class="sig-preview-label">Signature</div>
         <img id="sigPreview" alt="Signature">
       </div>
     </div>
+
     <div class="action-btns">
-      <button class="btn-email" onclick="sendEmail()">📧 Send to Astro Travel</button>
+      <button class="btn-share" id="shareBtn" onclick="shareReceipt()">📎 Send to Astro Travel</button>
       <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <div class="tip-box" id="tipBox" style="display:none">
+        <strong>📧 To email with the signature image:</strong><br>
+        1. Tap <strong>Print / Save as PDF</strong> above<br>
+        2. Share the PDF to Mail<br>
+        3. Send to <strong>info@astrotravel.com</strong>
+      </div>
       <button class="btn-new" onclick="resetForm()">Submit another sign-off</button>
     </div>
   </div>
@@ -324,31 +273,32 @@
 
   function submitForm() {
     let valid = true;
-    if (!confirmed)                                   { show('err-confirm'); valid = false; } else hide('err-confirm');
-    const group  = document.getElementById('groupName').value.trim();
-    if (!group)                                       { show('err-group');   valid = false; } else hide('err-group');
-    const dt     = document.getElementById('datetime').value;
-    if (!dt)                                          { show('err-dt');      valid = false; } else hide('err-dt');
+    if (!confirmed) { show('err-confirm'); valid = false; } else hide('err-confirm');
+    const group = document.getElementById('groupName').value.trim();
+    if (!group) { show('err-group'); valid = false; } else hide('err-group');
+    const dt = document.getElementById('datetime').value;
+    if (!dt) { show('err-dt'); valid = false; } else hide('err-dt');
     const leader = document.getElementById('leaderName').value.trim();
-    if (!leader)                                      { show('err-name');    valid = false; } else hide('err-name');
-    if (!hasSig)                                      { show('err-sig');     valid = false; } else hide('err-sig');
+    if (!leader) { show('err-name'); valid = false; } else hide('err-name');
+    if (!hasSig) { show('err-sig'); valid = false; } else hide('err-sig');
     if (!valid) return;
 
     const formatted = new Date(dt).toLocaleString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
 
-    document.getElementById('r-group').textContent    = group;
+    document.getElementById('r-group').textContent = group;
     document.getElementById('r-datetime').textContent = formatted;
-    document.getElementById('r-leader').textContent   = leader;
+    document.getElementById('r-leader').textContent = leader;
 
-    // Flatten signature onto white background so it shows in PDF/print
+    // Capture signature with white background
     const flatCanvas = document.createElement('canvas');
-    flatCanvas.width  = canvas.width;
+    flatCanvas.width = canvas.width;
     flatCanvas.height = canvas.height;
     const flatCtx = flatCanvas.getContext('2d');
     flatCtx.fillStyle = '#ffffff';
     flatCtx.fillRect(0, 0, flatCanvas.width, flatCanvas.height);
     flatCtx.drawImage(canvas, 0, 0);
     document.getElementById('sigPreview').src = flatCanvas.toDataURL('image/png');
+
     window._formData = { group, formatted, leader };
 
     document.getElementById('formScreen').style.display = 'none';
@@ -356,26 +306,65 @@
     window.scrollTo(0, 0);
   }
 
-  function sendEmail() {
-    const { group, formatted, leader } = window._formData;
-    const subject = encodeURIComponent(`Safety Sign-Off — ${group} — ${leader}`);
-    const body = encodeURIComponent(
-`ASTRO TRAVEL — SAFETY ANNOUNCEMENT SIGN-OFF
-============================================
+  async function shareReceipt() {
+    const btn = document.getElementById('shareBtn');
+    btn.disabled = true;
+    btn.textContent = 'Preparing...';
 
-✅ Safety Announcement: CONFIRMED
+    try {
+      // Capture the receipt card as an image
+      const card = document.getElementById('receiptCard');
+      const cardCanvas = await html2canvas(card, {
+        backgroundColor: '#0f2d18',
+        scale: 2,
+        useCORS: true,
+        logging: false
+      });
 
-Group Name:    ${group}
-Date & Time:   ${formatted}
-Group Leader:  ${leader}
+      const { group, formatted, leader } = window._formData;
+      const emailSubject = `Safety Sign-Off — ${group} — ${leader}`;
+      const emailBody = `ASTRO TRAVEL — SAFETY ANNOUNCEMENT SIGN-OFF\n============================================\n\n✅ Safety Announcement: CONFIRMED\n\nGroup Name:    ${group}\nDate & Time:   ${formatted}\nGroup Leader:  ${leader}\n\nSee attached image for signature.\n\n—\nSubmitted via Astro Travel Safety Sign-Off Form\nSubmission time: ${new Date().toLocaleString()}`;
 
-Signature: [See attached PDF or printed copy for signature image]
+      if (navigator.share) {
+        // Mobile: use native share sheet — lets them pick Mail and the image attaches automatically
+        cardCanvas.toBlob(async (blob) => {
+          const file = new File([blob], `safety-signoff-${group}.png`, { type: 'image/png' });
+          try {
+            await navigator.share({
+              title: emailSubject,
+              text: emailBody,
+              files: [file]
+            });
+          } catch(e) {
+            // User cancelled or files not supported — fall back to image share without file
+            try {
+              await navigator.share({ title: emailSubject, text: emailBody });
+            } catch(e2) { fallbackEmail(emailSubject, emailBody); }
+          }
+          btn.disabled = false;
+          btn.textContent = '📎 Send to Astro Travel';
+        }, 'image/png');
+      } else {
+        // Desktop: download the image and open email
+        const link = document.createElement('a');
+        link.download = `safety-signoff-${group}.png`;
+        link.href = cardCanvas.toDataURL('image/png');
+        link.click();
+        // Show tip box for attaching manually
+        document.getElementById('tipBox').style.display = 'block';
+        fallbackEmail(emailSubject, emailBody);
+        btn.disabled = false;
+        btn.textContent = '📎 Send to Astro Travel';
+      }
+    } catch(err) {
+      btn.disabled = false;
+      btn.textContent = '📎 Send to Astro Travel';
+      document.getElementById('tipBox').style.display = 'block';
+    }
+  }
 
-—
-Submitted via Astro Travel Safety Sign-Off Form
-Submission time: ${new Date().toLocaleString()}`
-    );
-    window.location.href = `mailto:${RECIPIENT}?subject=${subject}&body=${body}`;
+  function fallbackEmail(subject, body) {
+    window.location.href = `mailto:${RECIPIENT}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   }
 
   function resetForm() {
@@ -383,8 +372,9 @@ Submission time: ${new Date().toLocaleString()}`
     document.getElementById('formScreen').style.display = '';
     confirmed = false;
     document.getElementById('confirmBox').classList.remove('checked');
-    document.getElementById('groupName').value  = '';
+    document.getElementById('groupName').value = '';
     document.getElementById('leaderName').value = '';
+    document.getElementById('tipBox').style.display = 'none';
     clearSig();
     window.scrollTo(0, 0);
   }
