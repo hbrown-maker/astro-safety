@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Astro Travel — Safety Sign-Off</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-dark:  #081a0e;
+    --green-mid:   #0f2d18;
+    --green-light: #174023;
+    --gold:        #c9a227;
+    --gold-light:  #e8c040;
+    --white:       #f4f1e8;
+    --grey:        #7a9080;
+    --border:      rgba(201,162,39,0.18);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--green-dark); color: var(--white); min-height: 100vh; }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(150deg, var(--green-light) 0%, var(--green-dark) 100%);
+    border-bottom: 3px solid var(--gold);
+    padding: 28px 20px 22px;
+    position: relative; overflow: hidden;
+  }
+  .header::before {
+    content: ''; position: absolute; top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border: 2px solid rgba(201,162,39,0.1); border-radius: 50%;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+  .brand-star { font-size: 20px; }
+  .brand-name { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 3px; color: var(--gold); }
+  .header-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(201,162,39,0.12); border: 1px solid rgba(201,162,39,0.35);
+    border-radius: 20px; padding: 4px 12px;
+    font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold-light); margin-bottom: 10px;
+  }
+  h1 { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; line-height: 1.05; }
+  h1 span { color: var(--gold); }
+  .header-sub { font-size: 13px; color: var(--grey); margin-top: 8px; line-height: 1.55; }
+
+  /* FORM */
+  .form-body { padding: 22px 20px; }
+
+  .confirm-box {
+    background: rgba(201,162,39,0.07); border: 1.5px solid rgba(201,162,39,0.3);
+    border-radius: 12px; padding: 16px; margin-bottom: 26px;
+    display: flex; align-items: flex-start; gap: 12px; cursor: pointer;
+  }
+  .confirm-box input[type="checkbox"] { display: none; }
+  .check-circle {
+    width: 28px; height: 28px; min-width: 28px;
+    border: 2px solid var(--gold); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; color: transparent; transition: all 0.2s;
+  }
+  .confirm-box.checked .check-circle { background: var(--gold); color: var(--green-dark); }
+  .confirm-text { font-size: 14px; font-weight: 500; line-height: 1.5; padding-top: 2px; }
+  .confirm-text strong { color: var(--gold-light); display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 4px; }
+
+  .field { margin-bottom: 22px; }
+  label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--grey); margin-bottom: 8px; }
+  label span { color: var(--gold); margin-left: 2px; }
+
+  input[type="text"], input[type="datetime-local"] {
+    width: 100%; background: var(--green-mid); border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--white); font-family: 'DM Sans', sans-serif;
+    font-size: 16px; padding: 14px 16px; outline: none; transition: border-color 0.2s, background 0.2s;
+    -webkit-appearance: none; appearance: none;
+  }
+  input:focus { border-color: var(--gold); background: var(--green-light); }
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(0.7) sepia(1) saturate(2) hue-rotate(10deg); cursor: pointer; }
+
+  .sig-section { margin-bottom: 26px; }
+  .sig-wrap { background: #fff; border-radius: 12px; overflow: hidden; position: relative; border: 2px solid transparent; transition: border-color 0.2s; }
+  .sig-wrap.active { border-color: var(--gold); }
+  #sigCanvas { display: block; width: 100%; height: 160px; touch-action: none; cursor: crosshair; }
+  .sig-hint { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); color: #bbb; font-size: 13px; pointer-events: none; text-align: center; transition: opacity 0.2s; }
+  .sig-hint .sig-icon { font-size: 28px; display: block; margin-bottom: 4px; }
+  .sig-actions { display: flex; justify-content: flex-end; margin-top: 8px; }
+  .btn-clear { background: none; border: 1px solid var(--border); color: var(--grey); font-family: 'DM Sans', sans-serif; font-size: 12px; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.2s; }
+  .btn-clear:hover { border-color: var(--gold); color: var(--gold-light); }
+
+  .submit-btn {
+    width: 100%; background: var(--gold); color: var(--green-dark);
+    font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px;
+    border: none; border-radius: 14px; padding: 18px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    transition: opacity 0.2s; margin-top: 8px; position: relative; overflow: hidden;
+  }
+  .submit-btn::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); opacity: 0; transition: opacity 0.2s; }
+  .submit-btn:active::before { opacity: 1; }
+
+  .error-msg { color: #e05555; font-size: 12px; margin-top: 6px; display: none; }
+  .error-msg.show { display: block; }
+
+  /* CONFIRMATION SCREEN */
+  #confirmScreen { display: none; min-height: 100vh; flex-direction: column; }
+  #confirmScreen.visible { display: flex; }
+
+  .confirm-header {
+    background: linear-gradient(135deg, var(--green-light), var(--green-dark));
+    border-bottom: 3px solid var(--gold);
+    padding: 40px 24px 28px; text-align: center;
+  }
+  .check-anim {
+    width: 72px; height: 72px; background: rgba(201,162,39,0.15);
+    border: 2px solid var(--gold); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; font-size: 30px;
+    margin: 0 auto 16px; animation: pop 0.4s cubic-bezier(.17,.67,.35,1.5);
+  }
+  @keyframes pop { 0%{transform:scale(0)} 100%{transform:scale(1)} }
+  .confirm-header h2 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: 2px; color: var(--gold-light); }
+  .confirm-header p { color: var(--grey); font-size: 13px; margin-top: 6px; }
+
+  .confirm-body { flex: 1; padding: 24px 20px; }
+
+  .receipt-card { background: var(--green-mid); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+  .receipt-title { background: rgba(201,162,39,0.12); border-bottom: 1px solid var(--border); padding: 12px 16px; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--gold-light); }
+  .receipt-row { display: flex; flex-direction: column; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+  .receipt-row:last-of-type { border-bottom: none; }
+  .receipt-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin-bottom: 4px; }
+  .receipt-val { font-size: 15px; font-weight: 500; color: var(--white); }
+  .sig-preview-wrap { padding: 14px 16px; border-top: 1px solid var(--border); }
+  .sig-preview-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--grey); margin-bottom: 10px; }
+  #sigPreview { width: 100%; border-radius: 8px; background: #fff; display: block; }
+
+  .action-btns { display: flex; flex-direction: column; gap: 12px; }
+  .btn-email { width: 100%; background: var(--gold); color: var(--green-dark); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; border: none; border-radius: 12px; padding: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-print { width: 100%; background: var(--green-light); border: 1.5px solid var(--border); color: var(--white); font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; border-radius: 12px; padding: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-new { width: 100%; background: none; border: none; color: var(--grey); font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px; cursor: pointer; text-decoration: underline; }
+
+  @media print {
+    body { background: #fff !important; color: #000 !important; }
+    .header { background: #fff !important; border-color: #c9a227 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1 { color: #000 !important; }
+    h1 span { color: #c9a227 !important; }
+    .brand-name { color: #c9a227 !important; }
+    #formScreen { display: none !important; }
+    #confirmScreen { display: flex !important; }
+    .action-btns { display: none !important; }
+    .confirm-header { background: #0f2d18 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .confirm-header h2 { color: #e8c040 !important; }
+    .receipt-card { border: 1px solid #ccc !important; background: #fff !important; }
+    .receipt-val { color: #000 !important; }
+    .receipt-label { color: #666 !important; }
+    .receipt-title { background: #f5f0e0 !important; color: #7a5a00 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+</style>
+</head>
+<body>
+
+<!-- FORM SCREEN -->
+<div id="formScreen">
+  <div class="header">
+    <div class="brand">
+      <span class="brand-star">✦</span>
+      <span class="brand-name">Astro Travel</span>
+    </div>
+    <div class="header-badge">⚠ Official Record</div>
+    <h1>Safety <span>Sign-Off</span></h1>
+    <p class="header-sub">Complete all fields and sign below to confirm the safety announcement was delivered to your group.</p>
+  </div>
+
+  <div class="form-body">
+    <div class="confirm-box" id="confirmBox" onclick="toggleConfirm()">
+      <input type="checkbox" id="announcementCheck">
+      <div class="check-circle" id="checkCircle">✓</div>
+      <div class="confirm-text">
+        <strong>Confirm</strong>
+        I confirm that the safety announcement has been made to my group and all members have been informed of the relevant safety information.
+      </div>
+    </div>
+    <div class="error-msg" id="err-confirm">Please confirm the safety announcement was made.</div>
+
+    <div class="field">
+      <label>Group Name <span>*</span></label>
+      <input type="text" id="groupName" placeholder="e.g. Team Alpha, Group 4...">
+      <div class="error-msg" id="err-group">Please enter the group name.</div>
+    </div>
+
+    <div class="field">
+      <label>Date &amp; Time of Announcement <span>*</span></label>
+      <input type="datetime-local" id="datetime">
+      <div class="error-msg" id="err-dt">Please set the date and time.</div>
+    </div>
+
+    <div class="field">
+      <label>Group Leader Name <span>*</span></label>
+      <input type="text" id="leaderName" placeholder="Full name...">
+      <div class="error-msg" id="err-name">Please enter the group leader name.</div>
+    </div>
+
+    <div class="sig-section">
+      <label>Group Leader Signature <span>*</span></label>
+      <div class="sig-wrap" id="sigWrap">
+        <canvas id="sigCanvas"></canvas>
+        <div class="sig-hint" id="sigHint">
+          <span class="sig-icon">✍️</span>
+          Sign here with your finger
+        </div>
+      </div>
+      <div class="sig-actions">
+        <button class="btn-clear" onclick="clearSig()">Clear Signature</button>
+      </div>
+      <div class="error-msg" id="err-sig">Please provide your signature.</div>
+    </div>
+
+    <button class="submit-btn" onclick="submitForm()">✅ Submit Sign-Off</button>
+  </div>
+</div>
+
+<!-- CONFIRMATION SCREEN -->
+<div id="confirmScreen">
+  <div class="confirm-header">
+    <div class="check-anim">✦</div>
+    <h2>Sign-Off Complete</h2>
+    <p>Tap below to send your confirmation to Astro Travel.</p>
+  </div>
+  <div class="confirm-body">
+    <div class="receipt-card">
+      <div class="receipt-title">✦ Astro Travel — Safety Sign-Off Record</div>
+      <div class="receipt-row">
+        <div class="receipt-label">Safety Announcement</div>
+        <div class="receipt-val">✅ Confirmed — Announcement Made</div>
+      </div>
+      <div class="receipt-row">
+        <div class="receipt-label">Group Name</div>
+        <div class="receipt-val" id="r-group"></div>
+      </div>
+      <div class="receipt-row">
+        <div class="receipt-label">Date &amp; Time</div>
+        <div class="receipt-val" id="r-datetime"></div>
+      </div>
+      <div class="receipt-row">
+        <div class="receipt-label">Group Leader</div>
+        <div class="receipt-val" id="r-leader"></div>
+      </div>
+      <div class="sig-preview-wrap">
+        <div class="sig-preview-label">Signature</div>
+        <img id="sigPreview" alt="Signature">
+      </div>
+    </div>
+    <div class="action-btns">
+      <button class="btn-email" onclick="sendEmail()">📧 Send to Astro Travel</button>
+      <button class="btn-print" onclick="window.print()">🖨️ Print / Save as PDF</button>
+      <button class="btn-new" onclick="resetForm()">Submit another sign-off</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const RECIPIENT = 'info@astrotravel.com';
+
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  document.getElementById('datetime').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
+
+  let confirmed = false;
+  function toggleConfirm() {
+    confirmed = !confirmed;
+    document.getElementById('confirmBox').classList.toggle('checked', confirmed);
+    if (confirmed) hide('err-confirm');
+  }
+
+  const canvas = document.getElementById('sigCanvas');
+  const ctx = canvas.getContext('2d');
+  let drawing = false, hasSig = false, lastX = 0, lastY = 0;
+
+  (function resizeCanvas() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = rect.width * dpr;
+    canvas.height = 160 * dpr;
+    ctx.scale(dpr, dpr);
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = '160px';
+  })();
+
+  function getPos(e) {
+    const rect = canvas.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return { x: src.clientX - rect.left, y: src.clientY - rect.top };
+  }
+
+  canvas.addEventListener('mousedown', e => { drawing = true; const p = getPos(e); lastX = p.x; lastY = p.y; });
+  canvas.addEventListener('touchstart', e => { e.preventDefault(); drawing = true; const p = getPos(e); lastX = p.x; lastY = p.y; }, { passive: false });
+
+  function draw(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    const p = getPos(e);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY); ctx.lineTo(p.x, p.y);
+    ctx.strokeStyle = '#0a1f0f'; ctx.lineWidth = 2.5; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.stroke();
+    lastX = p.x; lastY = p.y;
+    if (!hasSig) {
+      hasSig = true;
+      document.getElementById('sigHint').style.opacity = '0';
+      document.getElementById('sigWrap').classList.add('active');
+      hide('err-sig');
+    }
+  }
+  canvas.addEventListener('mousemove', draw);
+  canvas.addEventListener('touchmove', draw, { passive: false });
+  canvas.addEventListener('mouseup', () => drawing = false);
+  canvas.addEventListener('touchend', () => drawing = false);
+
+  function clearSig() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    hasSig = false;
+    document.getElementById('sigHint').style.opacity = '1';
+    document.getElementById('sigWrap').classList.remove('active');
+  }
+
+  function show(id) { document.getElementById(id).classList.add('show'); }
+  function hide(id) { document.getElementById(id).classList.remove('show'); }
+
+  function submitForm() {
+    let valid = true;
+    if (!confirmed)                                   { show('err-confirm'); valid = false; } else hide('err-confirm');
+    const group  = document.getElementById('groupName').value.trim();
+    if (!group)                                       { show('err-group');   valid = false; } else hide('err-group');
+    const dt     = document.getElementById('datetime').value;
+    if (!dt)                                          { show('err-dt');      valid = false; } else hide('err-dt');
+    const leader = document.getElementById('leaderName').value.trim();
+    if (!leader)                                      { show('err-name');    valid = false; } else hide('err-name');
+    if (!hasSig)                                      { show('err-sig');     valid = false; } else hide('err-sig');
+    if (!valid) return;
+
+    const formatted = new Date(dt).toLocaleString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
+
+    document.getElementById('r-group').textContent    = group;
+    document.getElementById('r-datetime').textContent = formatted;
+    document.getElementById('r-leader').textContent   = leader;
+    document.getElementById('sigPreview').src         = canvas.toDataURL('image/png');
+    window._formData = { group, formatted, leader };
+
+    document.getElementById('formScreen').style.display = 'none';
+    document.getElementById('confirmScreen').classList.add('visible');
+    window.scrollTo(0, 0);
+  }
+
+  function sendEmail() {
+    const { group, formatted, leader } = window._formData;
+    const subject = encodeURIComponent(`Safety Sign-Off — ${group} — ${leader}`);
+    const body = encodeURIComponent(
+`ASTRO TRAVEL — SAFETY ANNOUNCEMENT SIGN-OFF
+============================================
+
+✅ Safety Announcement: CONFIRMED
+
+Group Name:    ${group}
+Date & Time:   ${formatted}
+Group Leader:  ${leader}
+
+Signature: [See attached PDF or printed copy for signature image]
+
+—
+Submitted via Astro Travel Safety Sign-Off Form
+Submission time: ${new Date().toLocaleString()}`
+    );
+    window.location.href = `mailto:${RECIPIENT}?subject=${subject}&body=${body}`;
+  }
+
+  function resetForm() {
+    document.getElementById('confirmScreen').classList.remove('visible');
+    document.getElementById('formScreen').style.display = '';
+    confirmed = false;
+    document.getElementById('confirmBox').classList.remove('checked');
+    document.getElementById('groupName').value  = '';
+    document.getElementById('leaderName').value = '';
+    clearSig();
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
