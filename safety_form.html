@@ -134,7 +134,14 @@
     <div class="error-msg" id="err-confirm">Please confirm the safety announcement was made.</div>
 
     <div class="field">
-      <label>Booking ID (ask Driver if unsure) <span>*</span></label>
+      <label style="font-size:13px; color:var(--gold-light);">Booking ID <span>*</span></label>
+      <input type="text" id="bookingId" placeholder="e.g. 30308-0" style="border-color: rgba(201,162,39,0.5); font-size:18px;">
+      <p style="font-size:11px; color:var(--grey); margin-top:6px;">ask your driver if you don't know it</p>
+      <div class="error-msg" id="err-booking">Please enter the booking ID.</div>
+    </div>
+
+    <div class="field">
+      <label>Group Name <span>*</span></label>
       <input type="text" id="groupName" placeholder="e.g. Team Alpha, Group 4...">
       <div class="error-msg" id="err-group">Please enter the group name.</div>
     </div>
@@ -181,6 +188,7 @@
     <div class="receipt-card" id="receiptCard">
       <div class="receipt-title">✦ Astro Travel — Safety Sign-Off Record</div>
       <div class="receipt-row"><div class="receipt-label">Safety Announcement</div><div class="receipt-val">✅ Confirmed — Announcement Made</div></div>
+      <div class="receipt-row" style="background:rgba(201,162,39,0.07);"><div class="receipt-label" style="color:var(--gold-light);">Booking ID</div><div class="receipt-val" id="r-booking" style="font-size:18px; color:var(--gold-light);"></div></div>
       <div class="receipt-row"><div class="receipt-label">Group Name</div><div class="receipt-val" id="r-group"></div></div>
       <div class="receipt-row"><div class="receipt-label">Date &amp; Time</div><div class="receipt-val" id="r-datetime"></div></div>
       <div class="receipt-row"><div class="receipt-label">Group Leader</div><div class="receipt-val" id="r-leader"></div></div>
@@ -274,6 +282,8 @@
   function submitForm() {
     let valid = true;
     if (!confirmed) { show('err-confirm'); valid = false; } else hide('err-confirm');
+    const booking = document.getElementById('bookingId').value.trim();
+    if (!booking) { show('err-booking'); valid = false; } else hide('err-booking');
     const group = document.getElementById('groupName').value.trim();
     if (!group) { show('err-group'); valid = false; } else hide('err-group');
     const dt = document.getElementById('datetime').value;
@@ -285,6 +295,7 @@
 
     const formatted = new Date(dt).toLocaleString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' });
 
+    document.getElementById('r-booking').textContent = booking;
     document.getElementById('r-group').textContent = group;
     document.getElementById('r-datetime').textContent = formatted;
     document.getElementById('r-leader').textContent = leader;
@@ -299,7 +310,7 @@
     flatCtx.drawImage(canvas, 0, 0);
     document.getElementById('sigPreview').src = flatCanvas.toDataURL('image/png');
 
-    window._formData = { group, formatted, leader };
+    window._formData = { booking, group, formatted, leader };
 
     document.getElementById('formScreen').style.display = 'none';
     document.getElementById('confirmScreen').classList.add('visible');
@@ -321,9 +332,9 @@
         logging: false
       });
 
-      const { group, formatted, leader } = window._formData;
-      const emailSubject = `Safety Sign-Off — ${group} — ${leader}`;
-      const emailBody = `ASTRO TRAVEL — SAFETY ANNOUNCEMENT SIGN-OFF\n============================================\n\n✅ Safety Announcement: CONFIRMED\n\nGroup Name:    ${group}\nDate & Time:   ${formatted}\nGroup Leader:  ${leader}\n\nSee attached image for signature.\n\n—\nSubmitted via Astro Travel Safety Sign-Off Form\nSubmission time: ${new Date().toLocaleString()}`;
+      const { booking, group, formatted, leader } = window._formData;
+      const emailSubject = `Safety Sign-Off — Booking ${booking} — ${group}`;
+      const emailBody = `ASTRO TRAVEL — SAFETY ANNOUNCEMENT SIGN-OFF\n============================================\n\n✅ Safety Announcement: CONFIRMED\n\nBooking ID:    ${booking}\nGroup Name:    ${group}\nDate & Time:   ${formatted}\nGroup Leader:  ${leader}\n\nSee attached image for signature.\n\n—\nSubmitted via Astro Travel Safety Sign-Off Form\nSubmission time: ${new Date().toLocaleString()}`;
 
       if (navigator.share) {
         // Mobile: use native share sheet — lets them pick Mail and the image attaches automatically
